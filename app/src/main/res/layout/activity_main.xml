@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="功能選擇"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/generalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="一般計算機"
+        android:layout_marginBottom="18dp" />
+
+    <Button
+        android:id="@+id/unitConversionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="單位轉換"
+        android:layout_marginBottom="18dp" />
+
+    <Button
+        android:id="@+id/exchangeRateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="匯率轉換"
+        android:layout_marginBottom="18dp" />
+
+    <Button
+        android:id="@+id/historyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="歷史紀錄" />
+
+</LinearLayout>

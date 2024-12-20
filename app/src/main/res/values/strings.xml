@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Final_Project_Test</string>
+
+    <!-- Please use the API of ExchangeRate -->
+    <!-- Remove comments, keep only the API -->
+    <string name="api_key"><!--your_api--></string>
+</resources>

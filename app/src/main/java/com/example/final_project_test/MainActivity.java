@@ -1,0 +1,53 @@
+package com.example.final_project_test;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import com.example.final_project_test.currencyconverter.MainActivity2;
+import com.example.final_project_test.UnitConverter.MainActivity3;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView text;
+    private Button generalButton, unitConversionButton, exchangeRateButton, historyButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        text = findViewById(R.id.text); // 連接 TextView 元件
+        generalButton = findViewById(R.id.generalButton); // 連接 Button 元件
+        unitConversionButton = findViewById(R.id.unitConversionButton); // 連接 Button 元件
+        exchangeRateButton = findViewById(R.id.exchangeRateButton); // 連接 Button 元件
+        historyButton = findViewById(R.id.historyButton); // 連接 Button 元件
+
+        /*
+        unitConversionButton.setOnClickListener(view -> { // Button 點擊事件
+            mStartForResut.launch(
+                    new Intent(packageContext: this, MainActivity2.class)
+            ); // 透過 Intent 切換至 Main2Activity
+        });
+        */
+
+        exchangeRateButton.setOnClickListener(view ->
+                startActivityForResult(new Intent(MainActivity.this, MainActivity2.class), 1)
+        );
+
+        unitConversionButton.setOnClickListener(view ->
+                startActivityForResult(new Intent(MainActivity.this, MainActivity3.class), 1)
+        );
+    }
+}
