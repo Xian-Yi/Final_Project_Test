@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="最近 10 筆計算結果"
+        android:text="最近的計算結果"
         android:textSize="18sp"
         android:textStyle="bold"
         android:paddingBottom="8dp" />
@@ -23,11 +23,24 @@
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" />
 
+    <!-- 清除歷史記錄的按鈕 -->
+    <Button
+        android:id="@+id/button_clear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="清除所有記錄"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@android:color/white" />
+
     <!-- 回到主畫面的按鈕 -->
     <Button
         android:id="@+id/button_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Home"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

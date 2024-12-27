@@ -12,12 +12,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.final_project_test.MainActivity;
 import com.example.final_project_test.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class MainActivity5 extends AppCompatActivity {
     private Button button_home;
+    private Button button_clear;
     private ListView resultListView;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> resultList;
@@ -36,10 +41,12 @@ public class MainActivity5 extends AppCompatActivity {
         loadHistory(); // 載入儲存的歷史紀錄
 
         // 接收來自 MainActivity4 的資料
-        String result = getIntent().getStringExtra("expression");
-
-        if (result != null && !result.isEmpty()) {
-            addResult(result); // 新增到清單並更新 UI
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("resultlog")) {
+            String result = intent.getStringExtra("resultlog");
+            if (result != null && !result.isEmpty()) {
+                addResult(result); // 新增到清單並更新 UI
+            }
         }
 
         // 設定按鈕事件
@@ -49,6 +56,7 @@ public class MainActivity5 extends AppCompatActivity {
     private void initializeUI() {
         resultListView = findViewById(R.id.resultListView);
         button_home = findViewById(R.id.button_home);
+        button_clear = findViewById(R.id.button_clear);
 
         resultList = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, resultList);
@@ -57,6 +65,7 @@ public class MainActivity5 extends AppCompatActivity {
 
     private void setButtonClickListeners() {
         button_home.setOnClickListener(v -> home());
+        button_clear.setOnClickListener(v -> clearHistory());
     }
 
     private void home() {
@@ -65,38 +74,64 @@ public class MainActivity5 extends AppCompatActivity {
         finish();
     }
 
+    private void loadHistory() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        Set<String> resultSet = prefs.getStringSet(RESULT_KEY, new LinkedHashSet<>());
+
+        resultList.clear();
+        resultList.addAll(resultSet);
+
+        // 按時間戳記排序，從晚到早顯示
+        Collections.sort(resultList, (a, b) -> {
+            String timestampA = a.split(" - ")[0];
+            String timestampB = b.split(" - ")[0];
+            return timestampB.compareTo(timestampA);
+        });
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private void clearHistory() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(RESULT_KEY);
+        editor.apply();
+
+        resultList.clear();
+        adapter.notifyDataSetChanged();
+
+        Toast.makeText(this, "所有記錄已清除", Toast.LENGTH_SHORT).show();
+    }
+
     private void addResult(String result) {
+        // 添加時間戳記到結果
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        String resultWithTimestamp = timestamp + " - " + result;
+
         // 確保清單不超過 10 筆
         if (resultList.size() >= MAX_RESULTS) {
             resultList.remove(0); // 移除最舊的一筆資料
         }
 
-        resultList.add(result);
-        adapter.notifyDataSetChanged(); // 更新 ListView
+        resultList.add(resultWithTimestamp);
 
-        saveHistory(); // 儲存到 SharedPreferences
+        // 按時間戳記排序，從晚到早顯示
+        Collections.sort(resultList, (a, b) -> {
+            String timestampA = a.split(" - ")[0];
+            String timestampB = b.split(" - ")[0];
+            return timestampB.compareTo(timestampA);
+        });
 
-        Toast.makeText(this, "結果已新增到記錄中", Toast.LENGTH_SHORT).show();
+        adapter.notifyDataSetChanged();
+        saveHistory();
     }
 
     private void saveHistory() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        Set<String> resultSet = new HashSet<>(resultList);
+        Set<String> resultSet = new LinkedHashSet<>(resultList);
         editor.putStringSet(RESULT_KEY, resultSet);
         editor.apply();
-    }
-
-    private void loadHistory() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Set<String> resultSet = prefs.getStringSet(RESULT_KEY, new HashSet<>());
-
-        resultList.clear();
-        resultList.addAll(resultSet);
-
-        // 確保顯示順序正確
-        resultList.sort(String::compareTo);
-        adapter.notifyDataSetChanged();
     }
 }

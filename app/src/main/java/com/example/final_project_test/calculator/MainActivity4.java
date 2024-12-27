@@ -2,6 +2,7 @@ package com.example.final_project_test.calculator;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +20,9 @@ import com.example.final_project_test.UnitConverter.MainActivity3;
 
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class MainActivity4 extends AppCompatActivity {
     private EditText inputEditText;
@@ -45,13 +49,30 @@ public class MainActivity4 extends AppCompatActivity {
         button_equals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String resultlog = evaluateExpression();  // 當點擊'='按鈕時，呼叫'='方法
-                Intent i = new Intent(MainActivity4.this, MainActivity5.class);
-                i.putExtra(resultlog, resultlog); //傳遞單一計算結果
-                startActivity(i); //啟動Activity5
+                String expression = inputEditText.getText().toString().trim();
+
+                // 檢查使用者是否輸入了數學表達式
+                if (expression.isEmpty()) {
+                    Toast.makeText(MainActivity4.this, "請輸入數學表達式", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 計算結果
+                String resultlog = evaluateExpression();
+
+                // 檢查計算結果是否有效
+                if ("0".equals(resultlog) || resultlog.contains("運算錯誤")) {
+                    Toast.makeText(MainActivity4.this, "計算失敗，請檢查輸入", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 顯示結果在當前畫面
+                resultTextView.setText(resultlog);
+
+                // 如果需要將結果保存到歷史記錄（可選）
+                saveToHistory(resultlog);
             }
         });
-
     }
 
 
@@ -235,7 +256,7 @@ public class MainActivity4 extends AppCompatActivity {
                 // 顯示計算結果於 resultText
                 resultTextView.setText(String.valueOf(result));
             }
-            return expression + result;
+            return expression + "=" +  result;
 
         } catch (Exception e) {
             // 當有錯誤發生時顯示錯誤訊息
@@ -249,4 +270,19 @@ public class MainActivity4 extends AppCompatActivity {
         Expression e = new ExpressionBuilder(expression).build();
         return e.evaluate(); // 返回計算結果
     }
+
+    private void saveToHistory(String result) {
+        SharedPreferences prefs = getSharedPreferences("ResultHistoryPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Set<String> resultSet = prefs.getStringSet("result_list", new LinkedHashSet<>());
+        resultSet.add(result); // 添加新結果
+
+        editor.putStringSet("result_list", resultSet);
+        editor.apply();
+
+        Toast.makeText(this, "結果已保存到歷史記錄", Toast.LENGTH_SHORT).show();
+    }
+
+
 }
