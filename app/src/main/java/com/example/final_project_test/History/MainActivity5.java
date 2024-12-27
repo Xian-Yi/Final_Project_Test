@@ -81,26 +81,21 @@ public class MainActivity5 extends AppCompatActivity {
         resultList.clear();
         resultList.addAll(resultSet);
 
-        // 按時間戳記排序，從晚到早顯示
+        // 根據時間戳記排序，從新到舊排列
         Collections.sort(resultList, (a, b) -> {
-            String timestampA = a.split(" - ")[0];
-            String timestampB = b.split(" - ")[0];
-            return timestampB.compareTo(timestampA);
+            try {
+                String timestampA = a.split(" - ")[0];
+                String timestampB = b.split(" - ")[0];
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date dateA = sdf.parse(timestampA);
+                Date dateB = sdf.parse(timestampB);
+                return dateB.compareTo(dateA);
+            } catch (Exception e) {
+                return 0;
+            }
         });
 
         adapter.notifyDataSetChanged();
-    }
-
-    private void clearHistory() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(RESULT_KEY);
-        editor.apply();
-
-        resultList.clear();
-        adapter.notifyDataSetChanged();
-
-        Toast.makeText(this, "所有記錄已清除", Toast.LENGTH_SHORT).show();
     }
 
     private void addResult(String result) {
@@ -115,15 +110,35 @@ public class MainActivity5 extends AppCompatActivity {
 
         resultList.add(resultWithTimestamp);
 
-        // 按時間戳記排序，從晚到早顯示
+        // 根據時間戳記排序，從新到舊排列
         Collections.sort(resultList, (a, b) -> {
-            String timestampA = a.split(" - ")[0];
-            String timestampB = b.split(" - ")[0];
-            return timestampB.compareTo(timestampA);
+            try {
+                String timestampA = a.split(" - ")[0];
+                String timestampB = b.split(" - ")[0];
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date dateA = sdf.parse(timestampA);
+                Date dateB = sdf.parse(timestampB);
+                return dateB.compareTo(dateA);
+            } catch (Exception e) {
+                return 0;
+            }
         });
 
         adapter.notifyDataSetChanged();
         saveHistory();
+    }
+
+
+    private void clearHistory() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(RESULT_KEY);
+        editor.apply();
+
+        resultList.clear();
+        adapter.notifyDataSetChanged();
+
+        Toast.makeText(this, "所有記錄已清除", Toast.LENGTH_SHORT).show();
     }
 
     private void saveHistory() {
