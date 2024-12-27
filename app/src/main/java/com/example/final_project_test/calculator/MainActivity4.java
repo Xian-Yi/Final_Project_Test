@@ -66,9 +66,6 @@ public class MainActivity4 extends AppCompatActivity {
                     return;
                 }
 
-                // 顯示結果在當前畫面
-                resultTextView.setText(resultlog);
-
                 // 如果需要將結果保存到歷史記錄（可選）
                 saveToHistory(resultlog);
             }
@@ -176,7 +173,7 @@ public class MainActivity4 extends AppCompatActivity {
         }
 
         // 避免開頭輸入非法運算符
-        if (currentText.isEmpty() && ("+".equals(input) || "-".equals(input) || "*".equals(input) || "/".equals(input))) {
+        if (currentText.isEmpty() && ("*".equals(input) || "/".equals(input))) {
             return;
         }
 
@@ -256,6 +253,8 @@ public class MainActivity4 extends AppCompatActivity {
                 // 顯示計算結果於 resultText
                 resultTextView.setText(String.valueOf(result));
             }
+
+            inputEditText.setText("");
             return expression + "=" +  result;
 
         } catch (Exception e) {
