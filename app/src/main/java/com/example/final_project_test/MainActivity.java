@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.example.final_project_test.currencyconverter.MainActivity2;
 import com.example.final_project_test.UnitConverter.MainActivity3;
+import com.example.final_project_test.calculator.MainActivity4;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         });
         */
 
+        generalButton.setOnClickListener(view ->
+                startActivityForResult(new Intent(MainActivity.this, MainActivity4.class), 1)
+        );
+
         exchangeRateButton.setOnClickListener(view ->
                 startActivityForResult(new Intent(MainActivity.this, MainActivity2.class), 1)
         );
@@ -49,5 +54,10 @@ public class MainActivity extends AppCompatActivity {
         unitConversionButton.setOnClickListener(view ->
                 startActivityForResult(new Intent(MainActivity.this, MainActivity3.class), 1)
         );
+
+        /*historyButton.setOnClickListener(view ->
+                startActivityForResult(new Intent(MainActivity.this, MainActivity5.class), 1)
+        );*/
+
     }
 }

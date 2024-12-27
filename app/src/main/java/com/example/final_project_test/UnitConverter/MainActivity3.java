@@ -23,7 +23,6 @@ public class MainActivity3 extends AppCompatActivity {
     private Spinner fromUnitSpinner;
     private Spinner toUnitSpinner;
     private Button convertButton, button_home;
-    private Button button_plus, button_subtract, button_multiply, button_divided, button_equals;
     private Button button0, button1, button2, button3, button4, button5, button6,button7,
             button8, button9, button_delete, button_dot,button_left, button_right, button_return;
 
@@ -103,15 +102,10 @@ public class MainActivity3 extends AppCompatActivity {
         fromUnitSpinner = findViewById(R.id.fromUnitSpinner);
         toUnitSpinner = findViewById(R.id.toUnitSpinner);
         convertButton = findViewById(R.id.convertButton);
-        convertButton = findViewById(R.id.convertButton);
         resultTextView = findViewById(R.id.resultTextView);
 
         button_home = findViewById(R.id.button_home);
-        button_plus = findViewById(R.id.button_plus);
-        button_subtract = findViewById(R.id.button_subtract);
-        button_multiply = findViewById(R.id.button_multiply);
-        button_divided = findViewById(R.id.button_divided);
-        button_equals = findViewById(R.id.button_equals);
+
         button0 = findViewById(R.id.button0);
         button1 = findViewById(R.id.button1);
         button2 = findViewById(R.id.button2);
@@ -143,19 +137,9 @@ public class MainActivity3 extends AppCompatActivity {
             numberButtons[i].setOnClickListener(v -> updateTextView(value)); // 將按下的數字或小數點插入到輸入框中
         }
 
-        // 運算符按鈕 (+, -, ×, ÷)
-        Button[] operatorButtons = {button_plus, button_subtract, button_multiply, button_divided};
-        String[] operatorValues = {"+", "-", "×", "÷"};
-
-        for (int i = 0; i < operatorButtons.length; i++) {
-            String operator = operatorValues[i]; // 取得對應的運算符
-            operatorButtons[i].setOnClickListener(v -> updateTextView(operator)); // 將按下的運算符號插入到輸入框中
-        }
 
         /* 特殊按鈕 */
 
-        // 等於按鈕(運算)
-        button_equals.setOnClickListener(v -> evaluateExpression());
         // 刪除單一字元按鈕
         button_return.setOnClickListener(v -> deleteOneCharacter());
         // 刪除全部字元按鈕
@@ -244,31 +228,6 @@ public class MainActivity3 extends AppCompatActivity {
         }
     }
 
-    // 評估並計算表達式
-    private void evaluateExpression() {
-        try {
-            // 取得 EditText 中的數學表達式並去除前後空白
-            String expression = inputEditText.getText().toString().trim();
-
-            // 替換運算符 "×" 和 "÷" 為 "*" 和 "/"，以便與 Java 的運算符相容
-            expression = expression.replace("×", "*").replace("÷", "/");
-
-            // 使用 evaluateMathExpression 方法計算結果
-            double result = evaluateMathExpression(expression);
-
-            // 顯示計算結果於 EditText
-            inputEditText.setText(String.valueOf(result));
-        } catch (Exception e) {
-            // 當有錯誤發生時顯示錯誤訊息
-            Toast.makeText(this, "運算錯誤", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //使用 exp4j 解析並計算數學表達式
-    private double evaluateMathExpression(String expression) throws Exception {
-        Expression e = new ExpressionBuilder(expression).build();
-        return e.evaluate(); // 返回計算結果
-    }
 
     // 根據選擇的類別更新單位下拉選單
     private void updateUnitSpinners(int categoryPosition) {
