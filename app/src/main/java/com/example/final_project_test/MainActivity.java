@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.final_project_test.currencyconverter.MainActivity2;
 import com.example.final_project_test.UnitConverter.MainActivity3;
 import com.example.final_project_test.calculator.MainActivity4;
+import com.example.final_project_test.History.MainActivity5;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(MainActivity.this, MainActivity3.class), 1)
         );
 
-        /*historyButton.setOnClickListener(view ->
+        historyButton.setOnClickListener(view ->
                 startActivityForResult(new Intent(MainActivity.this, MainActivity5.class), 1)
-        );*/
+        );
 
     }
 }

@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.final_project_test.History.MainActivity5;
 import com.example.final_project_test.MainActivity;
 import com.example.final_project_test.R;
 import com.example.final_project_test.UnitConverter.MainActivity3;
@@ -230,8 +232,8 @@ public class MainActivity4 extends AppCompatActivity {
                 resultTextView.setText(String.valueOf((int) result));
 
             } else {
-            // 顯示計算結果於 resultText
-            resultTextView.setText(String.valueOf(result));
+                // 顯示計算結果於 resultText
+                resultTextView.setText(String.valueOf(result));
             }
             return expression + result;
 
