@@ -3,44 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
-    <!-- 顯示標題 -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="最近的計算結果"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingBottom="8dp" />
-
-    <!-- 顯示結果的列表 -->
     <ListView
-        android:id="@+id/resultListView"
+        android:id="@+id/historyListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
+        android:layout_weight="1"/>
 
-    <!-- 清除歷史記錄的按鈕 -->
     <Button
-        android:id="@+id/button_clear"
+        android:id="@+id/clearHistoryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="清除所有記錄"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:textColor="@android:color/white" />
+        android:text="清除歷史紀錄"/>
 
-    <!-- 回到主畫面的按鈕 -->
     <Button
-        android:id="@+id/button_home"
+        android:id="@+id/homeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Home"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textColor="@android:color/white" />
+        android:text="返回主畫面"/>
+
 
 </LinearLayout>

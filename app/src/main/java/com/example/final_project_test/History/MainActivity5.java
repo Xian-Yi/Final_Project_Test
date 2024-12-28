@@ -1,152 +1,99 @@
 package com.example.final_project_test.History;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.final_project_test.MainActivity;
 import com.example.final_project_test.R;
+import com.example.final_project_test.utils.SharedData;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity5 extends AppCompatActivity {
-    private Button button_home;
-    private Button button_clear;
-    private ListView resultListView;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> resultList;
 
-    private static final int MAX_RESULTS = 10;
-    private static final String PREFS_NAME = "ResultHistoryPrefs";
-    private static final String RESULT_KEY = "result_list";
+    private ListView historyListView;
+    private Button clearHistoryButton;
+    private Button homeButton;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main5);
 
-        // 初始化 UI
-        initializeUI();
-        loadHistory(); // 載入儲存的歷史紀錄
+        historyListView = findViewById(R.id.historyListView);
+        clearHistoryButton = findViewById(R.id.clearHistoryButton);
+        homeButton = findViewById(R.id.homeButton);
 
-        // 接收來自 MainActivity4 的資料
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("resultlog")) {
-            String result = intent.getStringExtra("resultlog");
-            if (result != null && !result.isEmpty()) {
-                addResult(result); // 新增到清單並更新 UI
-            }
-        }
-
-        // 設定按鈕事件
-        setButtonClickListeners();
+        clearHistoryButton.setOnClickListener(v -> clearHistory());
+        homeButton.setOnClickListener(v -> returnToHome());
     }
 
-    private void initializeUI() {
-        resultListView = findViewById(R.id.resultListView);
-        button_home = findViewById(R.id.button_home);
-        button_clear = findViewById(R.id.button_clear);
-
-        resultList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, resultList);
-        resultListView.setAdapter(adapter);
-    }
-
-    private void setButtonClickListeners() {
-        button_home.setOnClickListener(v -> home());
-        button_clear.setOnClickListener(v -> clearHistory());
-    }
-
-    private void home() {
-        Intent intent = new Intent(MainActivity5.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadHistory();
     }
 
     private void loadHistory() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Set<String> resultSet = prefs.getStringSet(RESULT_KEY, new LinkedHashSet<>());
+        List<String> historyList = SharedData.getInstance().getHistoryList();
 
-        resultList.clear();
-        resultList.addAll(resultSet);
-
-        // 根據時間戳記排序，從新到舊排列
-        Collections.sort(resultList, (a, b) -> {
-            try {
-                String timestampA = a.split(" - ")[0];
-                String timestampB = b.split(" - ")[0];
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                Date dateA = sdf.parse(timestampA);
-                Date dateB = sdf.parse(timestampB);
-                return dateB.compareTo(dateA);
-            } catch (Exception e) {
-                return 0;
-            }
-        });
-
-        adapter.notifyDataSetChanged();
-    }
-
-    private void addResult(String result) {
-        // 添加時間戳記到結果
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        String resultWithTimestamp = timestamp + " - " + result;
-
-        // 確保清單不超過 10 筆
-        if (resultList.size() >= MAX_RESULTS) {
-            resultList.remove(0); // 移除最舊的一筆資料
+        if (historyList == null || historyList.isEmpty()) {
+            Toast.makeText(this, "沒有歷史紀錄可顯示", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        resultList.add(resultWithTimestamp);
+        try {
+            Collections.sort(historyList, Comparator.comparingLong(this::extractTimestamp));
+        } catch (Exception e) {
+            Toast.makeText(this, "歷史紀錄解析錯誤", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
 
-        // 根據時間戳記排序，從新到舊排列
-        Collections.sort(resultList, (a, b) -> {
-            try {
-                String timestampA = a.split(" - ")[0];
-                String timestampB = b.split(" - ")[0];
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                Date dateA = sdf.parse(timestampA);
-                Date dateB = sdf.parse(timestampB);
-                return dateB.compareTo(dateA);
-            } catch (Exception e) {
-                return 0;
+        // 移除時間戳記，只顯示運算結果部分
+        List<String> displayList = new ArrayList<>();
+        for (String record : historyList) {
+            String[] parts = record.split("#", 2);
+            if (parts.length == 2) {
+                displayList.add(parts[1]); // 只添加結果部分
             }
-        });
+        }
 
-        adapter.notifyDataSetChanged();
-        saveHistory();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayList);
+        historyListView.setAdapter(adapter);
     }
 
+    private long extractTimestamp(String record) {
+        try {
+            String[] parts = record.split("#");
+            if (parts.length > 1) {
+                return Long.parseLong(parts[0]);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     private void clearHistory() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(RESULT_KEY);
-        editor.apply();
-
-        resultList.clear();
+        SharedData.getInstance().clearHistory();
         adapter.notifyDataSetChanged();
-
-        Toast.makeText(this, "所有記錄已清除", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "歷史紀錄已清除", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveHistory() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        Set<String> resultSet = new LinkedHashSet<>(resultList);
-        editor.putStringSet(RESULT_KEY, resultSet);
-        editor.apply();
+    private void returnToHome() {
+        Intent intent = new Intent(MainActivity5.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
